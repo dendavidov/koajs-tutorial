@@ -1,29 +1,29 @@
 const koa = require('koa');
+const router = require('koa-router');
 const app = koa();
 
-app.use(function* (next){
-  console.log('1');
+//Instantiate the router:
+var _ = router();
 
-  yield next;
+//Define routes:
+_.get('/hello', getMessage);
+_.post('/hello', postMessage);
+_.all('/test', allMessages);
 
-  console.log('2');
-});
+function* getMessage() {
+  this.body = "Hello world\n";
+}
 
-app.use(function* (next){
-  console.log('3');
+function* postMessage() {
+  this.body = "You just called the post method at '/hello'!\n";
+}
 
-  yield next;
+function* allMessages() {
+  this.body = "All HTTP calls regardless of the verb will get this response\n";
+}
 
-  console.log('4');
-});
-
-app.use(function* (next){
-  console.log('5');
-
-  this.body = "Hello generators!";
-
-  console.log('6');
-});
+//Use the routes defined using the router
+app.use(_.routes());
 
 app.listen(3000, () => {
   console.log('Server running on https://localhost:3000');
