@@ -11,10 +11,10 @@ router.get('/test-id/:id', sendId);
 router.get('/test-id/:id/:id2', sendTwoIds);
 router.get('/test-5digits-id/:id([0-9]{5})', sendFiveDigitsId);
 
+router.get('/notfound', printErrorMessage);
+
 function* getMessage() {
-  console.log(this);
-  console.log(this.request.query);
-  this.body = this;
+  this.body = 'hello';
 }
 
 function* postMessage() {
@@ -35,6 +35,10 @@ function* sendTwoIds() {
 
 function* sendFiveDigitsId() {
   this.body = `id = ${this.params.id}`;
+}
+
+function* printErrorMessage() {
+  this.body = "Sorry we do not have this resource.";
 }
 
 module.exports = router;
