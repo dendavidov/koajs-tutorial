@@ -6,6 +6,7 @@ const router = koaRouter();
 //Define routes:
 router.get('/hello', getMessage);
 router.get('/dynamic', getDynamicMessage);
+router.get('/content', getComponents);
 router.post('/hello', postMessage);
 router.all('/test', allMessages);
 router.get('/test-id/:id', sendId);
@@ -23,6 +24,10 @@ function* getDynamicMessage() {
     name: 'Sample Name',
     url: 'http://dendavidov.com'
   });
+}
+
+function* getComponents() {
+  this.render('content');
 }
 
 function* postMessage() {
