@@ -2,31 +2,24 @@ const koa = require('koa');
 const app = koa();
 const router = require('./routes');
 
-function* handle404Errors() {
+var Pug = require('koa-pug');
+
+var pug = new Pug({
+  viewPath: './views',
+  basedir: './views',
+  app: app
+});
+
+app.use(router.routes());
+
+//Use the routes defined using the router
+
+function* handle404Errors(next) {
   if (404 != this.status) return;
   this.redirect('/notfound');
 }
 
-function* middlewareWithError(next) {
-  this.throw('Error message', 500);
-}
-
-//Use the routes defined using the router
-//app.use(router.routes());
-
-//app.use(handle404Errors);
-
-app.use(function* (next) {
-  try {
-    yield next;
-  } catch(err) {
-    this.status = err.status || 500;
-    this.body = err.message;
-    this.app.emit('error', err, this);
-  }
-});
-
-app.use(middlewareWithError);
+app.use(handle404Errors);
 
 app.listen(3000, () => {
   console.log('Server running on https://localhost:3000');

@@ -5,6 +5,7 @@ const router = koaRouter();
 
 //Define routes:
 router.get('/hello', getMessage);
+router.get('/dynamic', getDynamicMessage);
 router.post('/hello', postMessage);
 router.all('/test', allMessages);
 router.get('/test-id/:id', sendId);
@@ -14,7 +15,14 @@ router.get('/test-5digits-id/:id([0-9]{5})', sendFiveDigitsId);
 router.get('/notfound', printErrorMessage);
 
 function* getMessage() {
-  this.body = 'hello';
+  this.render('first_view');
+}
+
+function* getDynamicMessage() {
+  this.render('dynamic', {
+    name: 'Sample Name',
+    url: 'http://dendavidov.com'
+  });
 }
 
 function* postMessage() {
