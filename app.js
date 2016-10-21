@@ -8,10 +8,24 @@ const app = koa();
 app.keys = ['Secret key'];
 app.use(session(app));
 
-app.use(function *(next){
+app.use(function* (next){
   var n = this.session.views || 0;
   this.session.views = ++n;
   yield next;
+});
+
+app.use(function* (next) {
+  try {
+    yield next;
+  } catch(err) {
+    if (401 === err.status) {
+      this.status = 401;
+      this.set("WWW-Authenticate", "Basics");
+      this.body = 'You have no access here'
+    } else {
+      throw err;
+    }
+  }
 });
 
 //Set up Pug

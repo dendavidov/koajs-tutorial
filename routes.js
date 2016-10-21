@@ -1,4 +1,6 @@
 const koaRouter = require('koa-router');
+const auth = require('koa-basic-auth');
+const credentials = {name: "John", pass:"Dow"};
 
 //Instantiate the router:
 const router = koaRouter();
@@ -32,5 +34,17 @@ router.get('/', setACookie);
 router.get('/counter', count);
 router.get('/files', renderForm);
 router.post('/upload', handleForm);
+
+// Set up authentication here as first middleware. This returns an error if user is not authenticated.
+router.get('/protected', auth(credentials), function *(next){
+  this.body = 'You have access to the protected area.';
+  yield next;
+});
+
+// No authentication middleware present here.
+router.get('/unprotected', function*(next){
+  this.body = "Anyone can access this area";
+  yield next;
+});
 
 module.exports = router;
