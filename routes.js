@@ -18,7 +18,18 @@ function* setACookie() {
   })
 }
 
+function* count() {
+  console.log(this.session);
+  var n = 1;//this.session.views;
+  if (n === 1) {
+    this.body = 'Welcome here for the first time!';
+  } else {
+    this.body = "You've visited this page " + n + " times!";
+  }
+}
+
 router.get('/', setACookie);
+router.get('/counter', count);
 router.get('/files', renderForm);
 router.post('/upload', handleForm);
 
