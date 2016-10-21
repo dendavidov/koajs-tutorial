@@ -4,14 +4,14 @@ const koaRouter = require('koa-router');
 const router = koaRouter();
 
 function* renderForm() {
-  this.render('form')
+  this.render('file_upload')
 }
 
 function* handleForm() {
   this.body = this.request.body
 }
 
-router.get('/', renderForm);
-router.post('/', handleForm);
+router.get('/files', renderForm);
+router.post('/upload', handleForm);
 
 module.exports = router;
