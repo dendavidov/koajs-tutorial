@@ -8,13 +8,10 @@ const app = koa();
 app.keys = ['Secret key'];
 app.use(session(app));
 
-app.use(function *(){
+app.use(function *(next){
   var n = this.session.views || 0;
   this.session.views = ++n;
-  if(n === 1)
-    this.body = 'Welcome here for the first time!';
-  else
-    this.body = "You've visited this page " + n + " times!";
+  yield next;
 });
 
 //Set up Pug

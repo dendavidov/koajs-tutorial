@@ -16,11 +16,11 @@ function* setACookie() {
     httpOnly: false,
     expires: new Date(Date.now() + 60000 * 60 * 24)
   })
+  this.body = 'Welcome here for the first time!';
 }
 
-function* count() {
-  console.log(this.session);
-  var n = 1;//this.session.views;
+function* count(next) {
+  var n = this.session.views;
   if (n === 1) {
     this.body = 'Welcome here for the first time!';
   } else {
