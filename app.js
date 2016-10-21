@@ -1,4 +1,5 @@
 const koa = require('koa');
+var serve = require('koa-static');
 var router = require('./routes');
 var bodyParser = require('koa-body');
 var app = koa();
@@ -10,6 +11,9 @@ var pug = new Pug({
   baseDir: './views',
   app: app
 });
+
+app.use(serve('./public'));
+app.use(serve('./images'));
 
 app.use(bodyParser({
   formidable: {
