@@ -1,26 +1,28 @@
 const koa = require('koa');
-const app = koa();
-const router = require('./routes');
+var router = require('./routes');
+var bodyParser = require('koa-body');
+var app = koa();
 
+//Set up Pug
 var Pug = require('koa-pug');
-
 var pug = new Pug({
   viewPath: './views',
-  basedir: './views',
+  baseDir: './views',
   app: app
 });
 
+app.use(bodyParser({
+  formidable: {
+    uploadDir:'./uploads'
+  },
+  multipart: true,
+  urlencoded: true
+}));
+
 app.use(router.routes());
 
-//Use the routes defined using the router
+app.listen(3000);
 
-function* handle404Errors(next) {
-  if (404 != this.status) return;
-  this.redirect('/notfound');
-}
 
-app.use(handle404Errors);
 
-app.listen(3000, () => {
-  console.log('Server running on https://localhost:3000');
-});
+
