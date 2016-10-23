@@ -4,6 +4,9 @@ const session = require('koa-session');
 const router = require('./routes');
 const bodyParser = require('koa-body');
 const compress = require('koa-compress');
+const staticCache = require('koa-static-cache');
+const path = require('path');
+
 const app = koa();
 
 app.keys = ['Secret key'];
@@ -28,6 +31,14 @@ app.use(function* (next) {
     }
   }
 });
+
+app.use(staticCache(path.join(__dirname, 'public'), {
+  maxAge: 365 * 24 * 60 * 60
+}));
+
+app.use(staticCache(path.join(__dirname, 'images'), {
+  maxAge: 365 * 24 * 60 * 60
+}));
 
 //Set up Pug
 var Pug = require('koa-pug');
