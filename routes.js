@@ -60,6 +60,30 @@ function* getPersons(next) {
   });
 }
 
+function *updatePerson(){
+  console.log('this.request.body', this.request.body);
+  yield Person.findByIdAndUpdate(this.params.id, this.request.body, (err, response) => {
+    if(err) {
+      this.body = {message: "Error in updating person with id " + this.params.id};
+    }
+    else {
+      this.body = response;
+    }
+  });
+}
+
+function *deletePerson(next){
+  yield Person.findByIdAndRemove(this.params.id, (err, response) =>{
+    if(err) {
+      this.body = {message: "Error in deleting record id " + this.params.id};
+    }
+    else{
+      this.body = {message: "Person with id " + this.params.id + " removed."};
+    }
+  });
+}
+
+
 function* setACookie() {
   this.cookies.set('foo', 'bar', {
     httpOnly: false,
@@ -81,7 +105,8 @@ router.get('/', getRoot);
 router.get('/person', getPerson);
 router.post('/person', postPerson);
 router.get('/persons', getPersons);
-
+router.put('/people/:id', updatePerson);
+router.delete('/people/:id', deletePerson);
 router.get('/cookie', setACookie);
 router.get('/counter', count);
 router.get('/files', renderForm);
