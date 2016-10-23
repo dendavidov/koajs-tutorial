@@ -3,6 +3,7 @@ const serve = require('koa-static');
 const session = require('koa-session');
 const router = require('./routes');
 const bodyParser = require('koa-body');
+const compress = require('koa-compress');
 const app = koa();
 
 app.keys = ['Secret key'];
@@ -35,6 +36,14 @@ var pug = new Pug({
   baseDir: './views',
   app: app
 });
+
+app.use(compress({
+  filter: function (contentType) {
+    return /text/i.test(contentType)
+  },
+  treshold: 2048,
+  flush: require('zlib').Z_SYNC_FLUSH
+}));
 
 app.use(serve('./public'));
 app.use(serve('./images'));
