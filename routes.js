@@ -1,6 +1,9 @@
+"use strict";
 const koaRouter = require('koa-router');
 const auth = require('koa-basic-auth');
 const credentials = {name: "John", pass:"Dow"};
+
+const Person = require('./chemas/person');
 
 //Instantiate the router:
 const router = koaRouter();
@@ -17,16 +20,56 @@ function* getRoot() {
   this.render('index')
 }
 
+function* getPerson() {
+  this.render('person');
+}
+
+function* postPerson(next) {
+  let personalInfo = this.request.body;
+  if (!personalInfo.name || !personalInfo.age || !personalInfo.nationality) {
+    this.render('show_message', {
+      message: "Sorry, you provided wrong info",
+      type: "error"
+    })
+  } else {
+      const newPerson = new Person({
+        name: personalInfo.name,
+        age: personalInfo.age,
+        nationality: personalInfo.nationality
+      });
+      yield newPerson.save((err, res) => {
+        if (err) {
+          this.render('show_message', {
+            message: "Database error",
+            type: "error"
+          });
+        } else {
+          this.render('show_message', {
+            message: "New Person added",
+            type: "success",
+            person: personalInfo
+          })
+        }
+      })
+  }
+}
+
+function* getPersons(next) {
+  yield Person.find((err, response) => {
+    this.body = response;
+  });
+}
+
 function* setACookie() {
   this.cookies.set('foo', 'bar', {
     httpOnly: false,
     expires: new Date(Date.now() + 60000 * 60 * 24)
-  })
+  });
   this.body = 'Welcome here for the first time!';
 }
 
 function* count(next) {
-  var n = this.session.views;
+  let n = this.session.views;
   if (n === 1) {
     this.body = 'Welcome here for the first time!';
   } else {
@@ -35,6 +78,10 @@ function* count(next) {
 }
 
 router.get('/', getRoot);
+router.get('/person', getPerson);
+router.post('/person', postPerson);
+router.get('/persons', getPersons);
+
 router.get('/cookie', setACookie);
 router.get('/counter', count);
 router.get('/files', renderForm);
