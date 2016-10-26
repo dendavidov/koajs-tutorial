@@ -34,4 +34,28 @@ function* sendMovieWithId(next) {
 
 router.get('/:id([0-9]{3,})', sendMovieWithId);
 
+function* addNewMovie(next) {
+  if(!this.request.body.name ||
+    !this.request.body.year.toString().match(/^[0-9]{4}$/g) ||
+    !this.request.body.rating.toString().match(/^[0-9]\.[0-9]$/g)){
+    this.response.status = 400;
+    this.body = {message: "Bad Request"};
+  } else {
+    const newId = movies[movies.length - 1].id + 1;
+    movies.push({
+      id: newId,
+      name: this.request.body.name,
+      year: this.request.body.year,
+      rating: this.request.body.rating
+    });
+    this.body = {
+      message: "New movie created.",
+      location: "/movies/" + newId
+    };
+  }
+  yield next;
+}
+
+router.post('/', addNewMovie);
+
 module.exports = router;
