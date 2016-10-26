@@ -10,11 +10,28 @@ const movies = [
   {id: 104, name: "12 Angry Men", year: 1957, rating: 8.9}
 ];
 
+
 function* sendMovies(next){
   this.body = movies;
   yield next;
 }
 
 router.get('/', sendMovies);
+
+function* sendMovieWithId(next) {
+  const currentMovie = movies.filter(
+    (movie) => (movie.id === +this.params.id)
+  );
+  console.log(currentMovie, this.params);
+  if (currentMovie.length === 1) {
+    this.body = currentMovie[0];
+  } else {
+    this.response.status = 404;
+    this.body = {message: "Not Found"};
+  }
+  yield next;
+}
+
+router.get('/:id([0-9]{3,})', sendMovieWithId);
 
 module.exports = router;
