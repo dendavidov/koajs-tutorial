@@ -83,4 +83,20 @@ function* updateMovie(next) {
 
 router.put('/:id([0-9]{3,})', updateMovie);
 
+function* removeMovie(next) {
+  const movieId = this.params.id;
+  const movieIndex = movies.findIndex((movie) => (movie.id === + movieId));
+  if (movieIndex === -1) {
+    this.response.status = 404;
+    this.body = {message: "Not Found"};
+  } else {
+    movies.splice(movieIndex, 1);
+    this.body = {message: "Delete successful"};
+  }
+  yield next;
+}
+
+router.delete('/:id([0-9]{3,})', removeMovie);
+
+
 module.exports = router;
