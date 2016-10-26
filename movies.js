@@ -22,7 +22,6 @@ function* sendMovieWithId(next) {
   const currentMovie = movies.filter(
     (movie) => (movie.id === +this.params.id)
   );
-  console.log(currentMovie, this.params);
   if (currentMovie.length === 1) {
     this.body = currentMovie[0];
   } else {
@@ -57,5 +56,31 @@ function* addNewMovie(next) {
 }
 
 router.post('/', addNewMovie);
+
+function* updateMovie(next) {
+  if(!this.request.body.name ||
+    !this.request.body.year.toString().match(/^[0-9]{4}$/g) ||
+    !this.request.body.rating.toString().match(/^[0-9]\.[0-9]$/g)){
+    this.response.status = 400;
+    this.body = {message: "Bad Request"};
+  } else {
+    const movieId = this.params.id;
+    const movie = movies.find((movie) => (movie.id === + movieId));
+    if (movie) {
+      movie.name = this.request.body.name;
+      movie.year = this.request.body.year;
+      movie.rating = this.request.body.rating;
+      this.body = {
+        message: "Movie edited."
+      };
+    } else {
+      this.response.status = 404;
+      this.body = {message: "Not Found"};
+    }
+  }
+  yield next;
+}
+
+router.put('/:id([0-9]{3,})', updateMovie);
 
 module.exports = router;
